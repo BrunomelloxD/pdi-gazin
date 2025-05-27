@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: laravel_app
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=gazin
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=123
+    depends_on:
+      - db
+    command: >
+      sh -c "php artisan migrate --force && php artisan db:seed --force && apache2-foreground"
+      sh -c "./wait-for-it.sh db:5432 -- php artisan migrate --seed --force && apache2-foreground"
+
+  db:
+    image: postgres:15
+    container_name: laravel_db
+    environment:
+      POSTGRES_DB: gazin
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
