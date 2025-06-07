@@ -18,11 +18,6 @@ class UserRepository implements UserRepositoryInterface
         return User::find($id);
     }
 
-    public function findByEmail(string $email): ?User
-    {
-        return User::where('email', $email)->first();
-    }
-
     public function create(array $data): User
     {
         return User::create([
@@ -32,12 +27,6 @@ class UserRepository implements UserRepositoryInterface
         ]);
     }
 
-    /**
-     * Delete a user by their ID.
-     *
-     * @param int $id The ID of the user to delete.
-     * @return bool True if the user was successfully deleted, false otherwise.
-     */
     public function delete(int $id): bool
     {
         return User::destroy($id);

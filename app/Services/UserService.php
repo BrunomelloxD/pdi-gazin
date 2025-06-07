@@ -16,11 +16,6 @@ class UserService
         $this->userRepository = $users;
     }
 
-    public function exists($email)
-    {
-        return $this->userRepository->findByEmail($email) !== null;
-    }
-
     public function getAllUsers()
     {
         return $this->userRepository->all();

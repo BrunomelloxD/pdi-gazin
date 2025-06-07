@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends Controller
 {
@@ -38,20 +40,9 @@ class UserController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(CreateUserRequest $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email',
-            'password' => 'required|string|min:6'
-        ]);
-
-        if ($this->userService->exists($validatedData['email'])) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'User with email ' . $validatedData['email'] . ' already exists'
-            ], 409);
-        }
+        $validatedData = $request->validated();
 
         $user = $this->userService->createUser($validatedData);
 
@@ -72,13 +63,9 @@ class UserController extends Controller
         return response()->json($this->userService->deleteUser($id), 204);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email',
-            'password' => 'required|string|min:6'
-        ]);
+        $validatedData = $request->validated();
 
         if (!$this->userService->getUserById($id)) {
             return response()->json(['status' => 'error', 'message' => 'User with id ' . $id . ' not found'], 404);
